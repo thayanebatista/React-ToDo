@@ -3,6 +3,8 @@ import Tasks from "./components/Tasks";
 import "./App.css";
 import AddTask from "./components/AddTask";
 import { v4 as uuidv4 } from "uuid";
+import Header from "./components/Header";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const App = () => {
   // eslint-disable-next-line no-unused-vars
@@ -19,6 +21,15 @@ const App = () => {
     },
   ]);
 
+  const handleTaskClick = (taskId) => {
+    const newTasks = tasks.map((task) => {
+      if (task.id === taskId) return { ...task, completed: !task.completed };
+      return task;
+    });
+
+    setTasks(newTasks);
+  };
+
   const handleTaskAddition = (taskTitle) => {
     const newTasks = [
       ...tasks,
@@ -30,11 +41,32 @@ const App = () => {
     ];
     setTasks(newTasks);
   };
+
+  const handleTaskDelete = (taskId) => {
+    const newTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(newTasks);
+  };
+
   return (
-    <div className="conteiner">
-      <AddTask handleTaskAddition={handleTaskAddition} />
-      <Tasks tasks={tasks} />
-    </div>
+    <Router>
+      <div className="conteiner">
+        <Header />
+        <Route
+          path="/"
+          exact
+          render={() => (
+            <>
+              <AddTask handleTaskAddition={handleTaskAddition} />
+              <Tasks
+                tasks={tasks}
+                handleTaskClick={handleTaskClick}
+                handleTaskDelete={handleTaskDelete}
+              />
+            </>
+          )}
+        />
+      </div>
+    </Router>
   );
 };
 
